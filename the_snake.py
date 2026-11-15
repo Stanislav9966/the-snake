@@ -1,6 +1,7 @@
 from random import choice, randint
 
 import pygame
+
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 START_POSITION = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
