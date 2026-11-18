@@ -157,8 +157,7 @@ class Snake(GameObject):
         Метод определения головы змейки
         для отрисовки и движения.
         """
-        head_position = self.positions[0]
-        return head_position
+        return self.positions[0]
 
     def update_direction(self):
         """Обновление направления движения змейки"""
