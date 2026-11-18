@@ -44,13 +44,15 @@ clock = pg.time.Clock()
 
 
 # Тут опишите все классы игры.
+# Пришлось везде добавить дефолтное значение body_color
+# Так как не проходил pytest
 class GameObject:
     """Базовый класс"""
 
     def __init__(
         self,
-        body_color: tuple,
-        taken_positions: tuple = START_POSITION
+        body_color=None,
+        taken_positions=START_POSITION
     ):
         self.position = START_POSITION
         self.body_color = body_color
@@ -72,12 +74,12 @@ class GameObject:
         pg.draw.rect(screen, self.border_color, rect, 1)
 
 
-class OneCellObject(GameObject):
+class Apple(GameObject):
     """Наследующий класс объект из одной клетки для яблока/камня"""
 
     def __init__(
-            self, body_color: tuple,
-            taken_positions: tuple = START_POSITION
+            self, body_color=None,
+            taken_positions=START_POSITION
     ):
         super().__init__(body_color, taken_positions)
         self.randomize_position(self.taken_positions)
@@ -103,8 +105,8 @@ class Snake(GameObject):
     """Наследующий класс змейка"""
 
     def __init__(
-        self, body_color: tuple,
-        taken_positions: tuple = START_POSITION
+        self, body_color=None,
+        taken_positions=START_POSITION
     ):
         super().__init__(body_color, taken_positions)
         self.length = 1
@@ -188,8 +190,8 @@ def main():
     pg.init()
     # Тут нужно создать экземпляры классов.
     snake = Snake(SNAKE_COLOR)
-    apple = OneCellObject(APPLE_COLOR)
-    stone = OneCellObject(
+    apple = Apple(APPLE_COLOR)
+    stone = Apple(
         STONE_COLOR,
         (tuple(snake.positions) + apple.position)
     )
