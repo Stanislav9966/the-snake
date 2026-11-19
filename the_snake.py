@@ -49,13 +49,10 @@ clock = pg.time.Clock()
 class GameObject:
     """Базовый класс"""
 
-    def __init__(
-        self,
-        body_color=None,
-    ):
+    def __init__(self, body_color=None, border_color=None):
         self.position = START_POSITION
         self.body_color = body_color
-        self.border_color = BORDER_COLOR
+        self.border_color = border_color
 
     def draw(self):
         """Пустой метод для базового класса"""
@@ -77,23 +74,23 @@ class Apple(GameObject):
 
     def __init__(
             self, body_color=None,
-            taken_positions=(START_POSITION)
+            border_color=None,
+            taken_positions=(START_POSITION,)
     ):
-        super().__init__(body_color)
+        super().__init__(body_color, border_color)
         self.taken_positions = taken_positions
         self.randomize_position(self.taken_positions)
 
     def randomize_position(self, taken_positions):
         """Метод случайной позиции яблока"""
         while True:
-            position_xy = (
+            self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                 randint(0, GRID_HEIGHT - 1) * GRID_SIZE
             )
 
             # Проверка на пересечение с клетками змейки и камня
-            if (position_xy not in taken_positions):
-                self.position = position_xy
+            if self.position not in taken_positions:
                 break
 
     def draw(self):
@@ -104,10 +101,8 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Наследующий класс змейка"""
 
-    def __init__(
-        self, body_color=None,
-    ):
-        super().__init__(body_color)
+    def __init__(self, body_color=None, border_color=None):
+        super().__init__(body_color, border_color)
         self.length = 1
         self.positions = [self.position]
         self.direction = RIGHT
@@ -187,10 +182,11 @@ def main():
     # Инициализация PyGame:
     pg.init()
     # Тут нужно создать экземпляры классов.
-    snake = Snake(SNAKE_COLOR)
-    apple = Apple(APPLE_COLOR)
+    snake = Snake(SNAKE_COLOR, BORDER_COLOR)
+    apple = Apple(APPLE_COLOR, BORDER_COLOR)
     stone = Apple(
         STONE_COLOR,
+        BORDER_COLOR,
         (tuple(snake.positions) + (apple.position))
     )
     score = 0
@@ -223,9 +219,7 @@ def main():
         elif result_move in snake.positions[1:]:
             snake.reset()
             apple.randomize_position(tuple(snake.positions) + (stone.position))
-            stone.randomize_position(
-                tuple(snake.positions) + (apple.position)
-            )
+            stone.randomize_position(tuple(snake.positions) + (apple.position))
             score = 0
             screen.fill(BOARD_BACKGROUND_COLOR)
             pg.display.set_caption(f'Змейка. Счет: {score}.')
