@@ -52,12 +52,10 @@ class GameObject:
     def __init__(
         self,
         body_color=None,
-        taken_positions=START_POSITION
     ):
         self.position = START_POSITION
         self.body_color = body_color
         self.border_color = BORDER_COLOR
-        self.taken_positions = (taken_positions)
 
     def draw(self):
         """Пустой метод для базового класса"""
@@ -79,22 +77,24 @@ class Apple(GameObject):
 
     def __init__(
             self, body_color=None,
-            taken_positions=START_POSITION
+            taken_positions=(START_POSITION)
     ):
-        super().__init__(body_color, taken_positions)
+        super().__init__(body_color)
+        self.taken_positions = taken_positions
         self.randomize_position(self.taken_positions)
 
     def randomize_position(self, taken_positions):
         """Метод случайной позиции яблока"""
         while True:
-            position_x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
-            position_y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-            position_xy = (position_x, position_y)
+            position_xy = (
+                randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+            )
 
             # Проверка на пересечение с клетками змейки и камня
             if (position_xy not in taken_positions):
                 self.position = position_xy
-                return position_xy
+                break
 
     def draw(self):
         """Метод отрисовки яблока"""
@@ -106,9 +106,8 @@ class Snake(GameObject):
 
     def __init__(
         self, body_color=None,
-        taken_positions=START_POSITION
     ):
-        super().__init__(body_color, taken_positions)
+        super().__init__(body_color)
         self.length = 1
         self.positions = [self.position]
         self.direction = RIGHT
@@ -192,7 +191,7 @@ def main():
     apple = Apple(APPLE_COLOR)
     stone = Apple(
         STONE_COLOR,
-        (tuple(snake.positions) + apple.position)
+        (tuple(snake.positions) + (apple.position))
     )
     score = 0
 
@@ -206,7 +205,7 @@ def main():
         result_move = snake.move()
         taken_positions = (
             tuple(snake.positions)
-            + apple.position + stone.position
+            + (apple.position) + (stone.position)
         )
         if result_move == apple.position:
             snake.length += 1
@@ -223,10 +222,9 @@ def main():
             pg.display.set_caption(f'Змейка. Счет: {score}.')
         elif result_move in snake.positions[1:]:
             snake.reset()
-            apple.randomize_position(tuple(snake.positions))
-            taken_positions += apple.position
+            apple.randomize_position(tuple(snake.positions) + (stone.position))
             stone.randomize_position(
-                tuple(snake.taken_positions) + apple.position
+                tuple(snake.positions) + (apple.position)
             )
             score = 0
             screen.fill(BOARD_BACKGROUND_COLOR)
